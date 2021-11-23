@@ -12,7 +12,7 @@ listYOffset = 3 #Used for grid layout, to procedurally place items.
 testList = [] #Global variable used as a placeholder. May get deleted later.
 numBoxes = 0
 xOffset = 0
-#filetype = "Null" # Will be used in the future.
+fileTypes = [] # Will be used in the future.
 
 #Function declarations:
 def updateList(): #Updates the list of files in the CWD
@@ -46,9 +46,27 @@ def removeTextBoxes(boxList, numToRemove): #Loops through to delete any listings
 		numBoxes = numBoxes - 1
 		# print ("New testList total is " + str(len(testList))) #For debug purposes.
 
+def checkFileType(fileName): #Checks the last 5 characters for a period. 
+	lastFive = fileName[len(fileName)-5:len(fileName)]
+	for x in range(4,0,-1): #Counts down
+		if lastFive[5-x] == ".": #Starts at the end of the filename.
+			tempType = str(fileName[len(fileName)-x:len(fileName)])
+			return tempType #Returns the period and remaining characters.
+
+def list_filetypes(fileList): #Creates and returns a list.
+	fileTypes = []
+	offset = 0
+	fileTypes.append("All files")
+	#WIP Need to sort alphabetically.
+	for i in range (len(fileList)):
+		tempType = checkFileType(str(fileList[i]))
+		if tempType not in fileTypes:
+			fileTypes.append(tempType)
+	return fileTypes
+
 def list_files():
 	fileList = updateList() #Updates each time the button is pressed
-	combo = Combo(buttonBox, options=list_filetypes(fileList), selected="All Files", grid=[2,0])
+	combo = Combo(buttonBox, options=list_filetypes(fileList), selected="All files", grid=[2,0])
 	testList = createTextBoxes(fileList, len(fileList))
 	if (len(testList) > len(fileList)): #Checks to see if any files were removed from CWD.
 		removeTextBoxes(testList, (len(testList) > len(fileList)))
@@ -56,25 +74,6 @@ def list_files():
 		testList[i].value = fileList[i]
 	# print("numBoxes = " + str(numBoxes))
 
-def list_filetypes(fileList): #Not yet implemented.
-	fileTypes = []
-	offset = 0
-	fileTypes.append("All files")
-	#WIP Need to iterate the last 5 characters in each string to find the period
-	#and check previous entries to make sure there are no duplicate entries
-	#in the combo. Then append them to the list, and sort alphabetically.
-	for i in range (len(fileList)):
-		lastFive = fileList[i][len(fileList[i])-5:len(fileList[i])]
-		for x in range(4,0,-1): #Counts down
-			#print("Countdown: " + str(x))
-			if lastFive[5-x] == ".": #Starts at the end of the filename.
-				# print("X is " + str(x))
-				# print("Found it " + str(fileList[i][len(fileList[i])-x:len(fileList[i])]))
-				tempType = str(fileList[i][len(fileList[i])-x:len(fileList[i])])
-				if tempType not in fileTypes:
-					fileTypes.append(tempType)
-		# fileTypes.append(fileList[i][len(fileList[i])-5:len(fileList[i])])
-	return fileTypes
 #Main App Declaration: 
 
 app = App("Renamer", layout="grid")
