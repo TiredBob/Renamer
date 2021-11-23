@@ -10,6 +10,7 @@ from os.path import isfile
 cwd = getcwd()
 listYOffset = 3 #Used for grid layout, to procedurally place items.
 testList = [] #Global variable used as a placeholder. May get deleted later.
+numBoxes = 0
 #filetype = "Null" # Will be used in the future.
 
 #Function declarations:
@@ -18,21 +19,29 @@ def updateList(): #Updates the list of files in the CWD
 	return fileList #Removes the need for the global variable.
 
 def createTextBoxes(fileList, num): #Adds TextBoxes as list entries for each fileList entry.
+	global numBoxes
+	if (numBoxes > 0):
+		offset = numBoxes + 1
+	else:
+		offset = numBoxes + 3
 	for i in range(num): 
 		if (len(testList) < num): #Test to make sure we aren't adding unnecessary boxes.
-			print("Adding TextBox to testList at grid [0," + str(i) +"]") #For debug purposes.
-			if (len(fileList[i]) < 28):
+			print("Adding TextBox to testList at grid [0," + str(offset+len(testList)) +"]") #For debug purposes.
+			if (len(fileList[i]) < 28): #Set a minimum width for TextBox
 				minWidth = 28
 			else:
 				minWidth = len(fileList[i])
-			testList.append(TextBox(app, text="Error: Value not set!", grid=[0, listYOffset+len(testList)], width=(minWidth), align="left"))
+			testList.append(TextBox(app, text="Error: Value not set!", grid=[0, offset+len(testList)], width=(minWidth), align="left"))
+			numBoxes = numBoxes+1
 	return testList #Global variable still required, for comparisons.
 
 def removeTextBoxes(boxList, numToRemove): #Loops through to delete any listings no longer available.
+	global numBoxes
 	for i in range(numToRemove):
 		print ("To be removed " + str(numToRemove) + " TextBox(s)") #For debug purposes.
-		testList[i+1].destroy()
-		testList.pop(i+1)
+		testList[len(testList)-1].destroy()
+		testList.pop()
+		numBoxes = numBoxes - 1
 		print ("New testList total is " + str(len(testList))) #For debug purposes.
 
 def list_files():
@@ -42,7 +51,7 @@ def list_files():
 		removeTextBoxes(testList, (len(testList) > len(fileList)))
 	for i in range(len(fileList)): #Fills TextBoxes with data from fileList.
 		testList[i].value = fileList[i]
-
+	print("numBoxes = " + str(numBoxes))
 def select_filetype(): #Not yet implemented.
 	pass
 
