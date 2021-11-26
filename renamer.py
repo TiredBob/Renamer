@@ -2,16 +2,15 @@
 # Copyright 2021 TiredBob
 # https://github.com/TiredBob/Renamer
 
-from guizero import App, Text, PushButton, TextBox, Box, Combo
-from os import listdir, getcwd
-from os.path import isfile
+from guizero import App, Text, PushButton, TextBox, Box, Combo, MenuBar
+from os import listdir, getcwd, startfile
+from os.path import isfile, isdir
+from tkinter import filedialog
 
 #Variables
 cwd = getcwd()
-listYOffset = 3 #Used for grid layout, to procedurally place items.
 testList = [] #Global variable used as a placeholder. May get deleted later.
 numBoxes = 0
-xOffset = 0
 fileTypes = [] # Will be used in the future.
 
 #Function declarations:
@@ -19,9 +18,23 @@ def updateList(): #Updates the list of files in the CWD
 	fileList = [f for f in listdir(cwd) if isfile(f)]
 	return fileList #Removes the need for the global variable.
 
+def menuFakeFunc(): #Placeholder
+	pass
+
+def openDirectoryDialog():
+	newDirectory = filedialog.askdirectory()
+	return newDirectory
+
+def changeCWD():
+	newCWD = openDirectoryDialog()
+	print (newCWD)
+	if newCWD == "":
+		print("Canceled")
+	elif isdir(newCWD):
+		print("It's a directory")
+
 def createTextBoxes(fileList, num): #Adds TextBoxes as list entries for each fileList entry.
 	global numBoxes
-	global xOffset
 	if (numBoxes > 0):
 		offset = numBoxes + 1
 	else:
@@ -66,12 +79,13 @@ def list_filetypes(fileList): #Creates and returns a list.
 
 def list_files():
 	fileList = updateList() #Updates each time the button is pressed
-	combo = Combo(buttonBox, options=list_filetypes(fileList), selected="All files", grid=[2,0])
+	combo = Combo(app, options=list_filetypes(fileList), selected="All files", grid=[0,0], align="left")
 	testList = createTextBoxes(fileList, len(fileList))
 	if (len(testList) > len(fileList)): #Checks to see if any files were removed from CWD.
 		removeTextBoxes(testList, (len(testList) > len(fileList)))
 	for i in range(len(fileList)): #Fills TextBoxes with data from fileList.
 		testList[i].value = fileList[i]
+	button.hide()
 	# print("numBoxes = " + str(numBoxes))
 
 #Main App Declaration: 
@@ -80,10 +94,20 @@ app = App("Renamer", layout="grid")
 
 #Manual Widget Declarations:
 
-title = Text(app, "Push the green button to list files", grid=[0,0], align="left")
-buttonBox = Box(app, grid=[0,1], align="left", layout="grid")
-button = PushButton(buttonBox, list_files, text="List Files:", grid=[0,0], width=5, align="left")
-button.bg = "green"
+# title = Text(app, "Use the dropdown to list certain filetypes.", grid=[1,0], align="left")
+#Spacing for readability. Will be consolidated into single line once menu is feature complete.
+menubar = MenuBar(app, toplevel=["File", "Edit"], options=
+	[
+		[
+			["Update Files", list_files],["Open Directory", changeCWD]
+		],
+		[
+			["Option Edit", menuFakeFunc], ["Edit 2", menuFakeFunc]
+		]
+	])
+##buttonBox = Box(app, grid=[0,1], align="left", layout="grid")
+button = PushButton(app, list_files, text="List Files:", grid=[0,0], align="left")
+# button.bg = "green"
 #button2 = PushButton(buttonBox, select_filetype, text="Select Filetype", grid=[1, 0], width=8, align="left")
 #button2.bg = "green"
 
