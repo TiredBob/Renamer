@@ -3,7 +3,7 @@
 # https://github.com/TiredBob/Renamer
 
 from guizero import App, Text, PushButton, TextBox, Box, Combo, MenuBar
-from os import listdir, getcwd, startfile
+from os import listdir, getcwd
 from os.path import isfile, isdir
 from tkinter import filedialog
 
