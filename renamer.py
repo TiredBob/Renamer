@@ -1,21 +1,23 @@
 # File renamer
 # Copyright 2021 TiredBob
 # https://github.com/TiredBob/Renamer
+# WIP Features: Create checkboxes for filetypes. Once item is unchecked, remove filetype from list.
+# TBA Features: 
+#
 
-from guizero import App, Text, PushButton, TextBox, Box, Combo, MenuBar
+from guizero import App, Text, PushButton, TextBox, Box, Combo, MenuBar, CheckBox
 from os import listdir, getcwd, chdir
 from os.path import isfile, isdir
 from tkinter import filedialog
 
-#Variables
-# cwd = getcwd()
+#Global Variables (Eww)
 testList = [] #Global variable used as a placeholder. May get deleted later.
 numBoxes = 0
 fileTypes = [] # Will be used in the future.
 
 #Function declarations:
 def updateList(): #Updates the list of files in the CWD
-	fileList = [f for f in listdir(getcwd()) if isfile(f)]
+	fileList = [file for file in listdir(getcwd()) if isfile(file)]
 	return fileList #Removes the need for the global variable.
 
 def menuFakeFunc(): #Placeholder
@@ -27,13 +29,12 @@ def openDirectoryDialog():
 
 def changeCWD(oldCWD = getcwd()): #Opens a dialong box to select and return a directory.
 	newCWD = openDirectoryDialog()
-	# print (newCWD)	
-	if newCWD == "":
-		print("No change to CWD")
-	elif isdir(newCWD):
+	# print (newCWD)	#For debugging purposes. 
+	if isdir(newCWD):
 		chdir(newCWD)
-		# print("It's a directory")
-		# print (newCWD)
+		list_files()
+	else:
+		print("An error has occured. Invalid directory")
 
 def createTextBoxes(fileList, num): #Adds TextBoxes as list entries for each fileList entry.
 	global numBoxes
@@ -61,14 +62,15 @@ def removeTextBoxes(boxList, numToRemove): #Loops through to delete any listings
 		numBoxes = numBoxes - 1
 		# print ("New testList total is " + str(len(testList))) #For debug purposes.
 
-def checkFileType(fileName): #Checks the last 5 characters for a period. 
-	lastFive = fileName[len(fileName)-5:len(fileName)]
-	for x in range(4,0,-1): #Counts down
-		if lastFive[5-x] == ".": #Starts at the end of the filename.
+def checkFileType(fileName): #Checks the last 6 characters for a period. 
+	lastSix = fileName[len(fileName)-6:len(fileName)]
+	for x in range(6,0,-1): #Counts down
+		if lastSix[6-x] == ".": #Starts at the end of the filename.
 			tempType = str(fileName[len(fileName)-x:len(fileName)])
 			return tempType #Returns the period and remaining characters.
 
 def list_filetypes(fileList): #Creates and returns a list.
+	global fileTypes
 	fileTypes = []
 	offset = 0
 	fileTypes.append("All files")
@@ -82,10 +84,12 @@ def list_filetypes(fileList): #Creates and returns a list.
 def list_files():
 	fileList = updateList() #Updates each time the button is pressed
 	# print (fileList)
-	combo = Combo(buttonBox, options=list_filetypes(fileList), selected="All files", grid=[1,0], height=2, align="left")
+	fileTypes = list_filetypes(fileList)
+	for i in range(len(fileTypes)):
+		typeS[i].text = fileTypes[i]
 	testList = createTextBoxes(fileList, len(fileList))
 	if (len(testList) > len(fileList)): #Checks to see if any files were removed from CWD.
-		removeTextBoxes(testList, (len(testList) > len(fileList)))
+		removeTextBoxes(testList, (len(testList) - len(fileList)))
 	for i in range(len(fileList)): #Fills TextBoxes with data from fileList.
 		testList[i].value = fileList[i]
 	# button.hide()
@@ -108,12 +112,11 @@ menubar = MenuBar(app, toplevel=["File", "Edit"], options=
 			["Option Edit", menuFakeFunc], ["Edit 2", menuFakeFunc]
 		]
 	])
-buttonBox = Box(app, grid=[0,0], align="left", layout="grid")
-button = PushButton(buttonBox, list_files, text="List Files:", grid=[0,0], align="left")
-# button.bg = "green"
-#button2 = PushButton(buttonBox, select_filetype, text="Select Filetype", grid=[1, 0], width=8, align="left")
-#button2.bg = "green"
+buttonBox = Box(app, grid=[0,1], align="left", layout="grid")
+button = PushButton(app, list_files, text="Update List", grid=[0,0], align="left")
+typeS = [CheckBox(buttonBox, grid=[i,0], text="Add " + str(i), width=4, align="left") for i in range(5)]
+
 
 #Display // Main Program Loop.
-
+list_files()
 app.display()
