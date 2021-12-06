@@ -74,7 +74,7 @@ def list_filetypes(fileList): #Creates and returns a list.
 	fileTypes = []
 	offset = 0
 	fileTypes.append("All files")
-	#WIP Need to sort alphabetically.
+	#WIP Need to sort alphabetically?
 	for i in range (len(fileList)):
 		tempType = checkFileType(str(fileList[i]))
 		if ((tempType not in fileTypes) and (tempType is not None)):
@@ -84,17 +84,23 @@ def list_filetypes(fileList): #Creates and returns a list.
 			if (i < len(fileTypes)):
 				typeS[i].text = fileTypes[i]
 				typeS[i].visible = True
+				# typeS[i].value = 1
 			elif (i >= len(fileTypes)):
 				typeS[i].visible = False
+				typeS[i].text = None
 		if (i >= 5 and i < 10):
 			offset = i-5
 			if (i < len(fileTypes)):
 				typeS2[offset].text = fileTypes[i]
 				# print(fileTypes[i] + str(i))
 				typeS2[offset].visible = True
+				# typeS2[offset].value = 1
 			elif (i >= len(fileTypes)):
 				# print("I =" + str(i-5))
 				typeS2[offset].visible = False
+				typeS2[offset].text = None
+	if (fileTypes[0] in typeS[0].text and typeS[0].value == 1):
+		# print("It's there, and it's checked")
 	return fileTypes
 
 def list_files():
@@ -131,6 +137,7 @@ buttonBox = Box(app, grid=[0,1], align="left", layout="grid")
 button = PushButton(app, list_files, text="Update List", grid=[0,0], align="left")
 # button2 = PushButton(app, swap, text="Swap 'Em", grid=[1,0], align="left")
 typeS = [CheckBox(buttonBox, grid=[i,0], text="Add " + str(i), width=4, align="left") for i in range(5)]
+typeS[0].value = 1
 typeS2 = [CheckBox(buttonBox, grid=[i,1], text="Add " + str(i), width=4, align="left") for i in range(5)]
 
 

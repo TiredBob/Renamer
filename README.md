@@ -8,3 +8,4 @@ The primary goal of this project is to be able to make several *similar* changes
 The other goals are to be usable in Windows or Linux without modification (will probably work on Mac as well, but I don't have one on hand for testing)
 
 Currently there is no real functionality, only some parts of the GUI have been added, and I am working on the logic behind adding/removing GUI widgets procedurally. 
+It only supports extensions up to 5 characters in length (6 including the .) and I see no reason to add support for anything longer.
