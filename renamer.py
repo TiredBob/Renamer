@@ -99,7 +99,7 @@ def list_filetypes(fileList): #Creates and returns a list.
 				# print("I =" + str(i-5))
 				typeS2[offset].visible = False
 				typeS2[offset].text = None
-	if (fileTypes[0] in typeS[0].text and typeS[0].value == 1):
+	# if (fileTypes[0] in typeS[0].text and typeS[0].value == 1):
 		# print("It's there, and it's checked")
 	return fileTypes
 
