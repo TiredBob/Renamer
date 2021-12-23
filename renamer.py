@@ -13,12 +13,12 @@ from tkinter import filedialog
 #Global Variables (Eww)
 testList = [] #Global variable used as a placeholder. May get deleted later.
 numBoxes = 0
-fileTypes = [] # Will be used in the future.
+fileTypes = [] 
 
 #Function declarations:
 def updateList(): #Updates the list of files in the CWD
 	fileList = [file for file in listdir(getcwd()) if isfile(file)]
-	return fileList #Removes the need for the global variable.
+	return fileList 
 
 def menuFakeFunc(): #Placeholder
 	pass
@@ -29,7 +29,6 @@ def openDirectoryDialog():
 
 def changeCWD(oldCWD = getcwd()): #Opens a dialong box to select and return a directory.
 	newCWD = openDirectoryDialog()
-	# print (newCWD)	#For debugging purposes. 
 	if isdir(newCWD):
 		chdir(newCWD)
 		list_files()
@@ -69,6 +68,28 @@ def checkFileType(fileName): #Checks the last 6 characters for a period.
 			tempType = str(fileName[len(fileName)-x:len(fileName)])
 			return tempType #Returns the period and remaining characters.
 
+def updateCheckbox(fileTypes):
+	for i in range(10):
+		if (i < 5):
+			if (i < len(fileTypes)):
+				fileCheckBox[i].text = fileTypes[i]
+				fileCheckBox[i].visible = True
+				# fileCheckBox[i].value = 1
+			elif (i >= len(fileTypes)):
+				fileCheckBox[i].visible = False
+				fileCheckBox[i].text = None
+		if (i >= 5 and i < 10):
+			offset = i-5
+			if (i < len(fileTypes)):
+				fileCheckBox2[offset].text = fileTypes[i]
+				# print(fileTypes[i] + str(i))
+				fileCheckBox2[offset].visible = True
+				# fileCheckBox2[offset].value = 1
+			elif (i >= len(fileTypes)):
+				# print("I =" + str(i-5))
+				fileCheckBox2[offset].visible = False
+				fileCheckBox2[offset].text = None
+
 def list_filetypes(fileList): #Creates and returns a list.
 	global fileTypes
 	fileTypes = []
@@ -79,27 +100,8 @@ def list_filetypes(fileList): #Creates and returns a list.
 		tempType = checkFileType(str(fileList[i]))
 		if ((tempType not in fileTypes) and (tempType is not None)):
 			fileTypes.append(tempType)
-	for i in range(10):
-		if (i < 5):
-			if (i < len(fileTypes)):
-				typeS[i].text = fileTypes[i]
-				typeS[i].visible = True
-				# typeS[i].value = 1
-			elif (i >= len(fileTypes)):
-				typeS[i].visible = False
-				typeS[i].text = None
-		if (i >= 5 and i < 10):
-			offset = i-5
-			if (i < len(fileTypes)):
-				typeS2[offset].text = fileTypes[i]
-				# print(fileTypes[i] + str(i))
-				typeS2[offset].visible = True
-				# typeS2[offset].value = 1
-			elif (i >= len(fileTypes)):
-				# print("I =" + str(i-5))
-				typeS2[offset].visible = False
-				typeS2[offset].text = None
-	# if (fileTypes[0] in typeS[0].text and typeS[0].value == 1):
+	updateCheckbox(fileTypes)
+	# if (fileTypes[0] in fileCheckBox[0].text and fileCheckBox[0].value == 1): #Template for filetype checkmark
 		# print("It's there, and it's checked")
 	return fileTypes
 
@@ -122,7 +124,7 @@ app = App("Renamer", layout="grid")
 #Manual Widget Declarations:
 
 # title = Text(app, "Use the dropdown to list certain filetypes.", grid=[1,0], align="left")
-#Spacing for readability. Will be consolidated into single line once menu is feature complete.
+# Spacing for readability. Will be consolidated into single line once menu is feature complete.
 menubar = MenuBar(app, toplevel=["File", "Edit"], options=
 	[
 		[
@@ -135,10 +137,10 @@ menubar = MenuBar(app, toplevel=["File", "Edit"], options=
 
 buttonBox = Box(app, grid=[0,1], align="left", layout="grid")
 button = PushButton(app, list_files, text="Update List", grid=[0,0], align="left")
-# button2 = PushButton(app, swap, text="Swap 'Em", grid=[1,0], align="left")
-typeS = [CheckBox(buttonBox, grid=[i,0], text="Add " + str(i), width=4, align="left") for i in range(5)]
-typeS[0].value = 1
-typeS2 = [CheckBox(buttonBox, grid=[i,1], text="Add " + str(i), width=4, align="left") for i in range(5)]
+# button2 = PushButton(app, swap, text="Swap 'Em", grid=[1,0], align="left") #For testing mostly. Will be deleted.
+fileCheckBox = [CheckBox(buttonBox, grid=[i,0], text="Add " + str(i), width=4, align="left") for i in range(5)]
+fileCheckBox[0].value = 1 # By default shows a check mark in the all files checkbox
+fileCheckBox2 = [CheckBox(buttonBox, grid=[i,1], text="Add " + str(i), width=4, align="left") for i in range(5)]
 
 
 #Display // Main Program Loop.
